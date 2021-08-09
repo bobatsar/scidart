@@ -22,6 +22,7 @@ void main() {
     print(list);
 
     expect(list.length, 4);
+    expect(list.last, 0.0);
 
     list.length = 2;
     print(list);

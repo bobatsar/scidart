@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:collection/collection.dart';
 
 /// Class to create 1 dimension Array.
 ///
@@ -30,54 +31,42 @@ import 'dart:collection';
 /// */
 /// ```
 class Array extends ListBase<double> {
-  List<double?> l = [];
+  QueueList<double?> l = QueueList();
 
   //#region constructors
   Array(List<double> list) {
-    l = list.toList();
+    l = QueueList.from(list);
   }
 
   Array.empty();
 
   Array.fromArray(Array list) {
     // deep copy of the parameter
-    l = list.map((element) => element).toList();
+    l = QueueList.from(list.l);
   }
 
   Array.fixed(int length, {double? initialValue}) {
     if (initialValue != null) {
-      l = List<double>.generate(length, (i) => initialValue);
+      l = QueueList.from(List<double>.generate(length, (i) => initialValue));
     } else {
-      l = List<double>.filled(length, 0.0);
+      l = QueueList.from(List<double>.filled(length, 0.0));
     }
   }
   //#endregion
 
-  //#region operators
+  @override
+  void add(double element) {
+    l.add(element);
+  }
+
   @override
   set length(int newLength) {
-    if (newLength < 0) {
-      throw FormatException(
-          'newLength must be greater equal than 0 (newLength >= 0)');
-    }
-
-    var aux = l.map((element) => element).toList();
-
     if (newLength == 0) {
-      l = [];
+      l.clear();
     } else if (newLength > l.length) {
-      l = [];
-      aux.forEach((element) {
-        l.add(element);
-      });
-      for (var i = l.length; i < newLength; i++) {
-        l.add(0.0);
-      }
+      l.addAll(List.filled(newLength - l.length, 0.0));
     } else if (newLength < length) {
-      l = [];
-      for (var i = 0; i < newLength; i++) {
-        l.add(aux[i]);
-      }
+      l.removeRange(newLength, l.length);
     }
   }
 
